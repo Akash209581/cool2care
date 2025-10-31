@@ -28,7 +28,7 @@
 2. **Configure Environment Variables**:
    - **Backend Service Variables**:
      ```
-     MONGODB_URI=your_mongodb_atlas_connection_string
+     MONGODB_URI=mongodb+srv://231fa04867_db_user:I7MymzhaClahJEPF@cluster0.gvkjbre.mongodb.net/cool2care?retryWrites=true&w=majority&appName=Cluster0
      JWT_SECRET=your_super_secret_jwt_key_here
      CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
      CLOUDINARY_API_KEY=your_cloudinary_api_key
