@@ -1,0 +1,11 @@
+# Nixpacks configuration for Railway
+providers = ["node"]
+
+[phases.build]
+cmds = ["npm ci"]
+
+[phases.start]
+cmd = "npm start"
+
+[variables]
+NODE_ENV = "production"
