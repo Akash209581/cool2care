@@ -23,6 +23,8 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: false,
+    target: 'esnext',
+    minify: 'esbuild',
     rollupOptions: {
       output: {
         manualChunks: {
@@ -34,6 +36,10 @@ export default defineConfig({
   },
   define: {
     global: 'globalThis',
+    'process.env': {},
   },
   base: '/',
+  esbuild: {
+    logOverride: { 'this-is-undefined-in-esm': 'silent' }
+  },
 })

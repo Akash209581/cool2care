@@ -11,17 +11,31 @@ import { CartProvider } from './context/CartContext.jsx'
 // Import API configuration
 import './utils/api.js'
 
+// Polyfill for global if needed
+if (typeof global === 'undefined') {
+  window.global = window;
+}
+
 // Create a query client
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
       staleTime: 5 * 60 * 1000, // 5 minutes
+      refetchOnWindowFocus: false,
+    },
+    mutations: {
+      retry: 1,
     },
   },
 })
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+const root = document.getElementById('root');
+if (!root) {
+  throw new Error('Root element not found');
+}
+
+ReactDOM.createRoot(root).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
