@@ -21,6 +21,7 @@ const createPolyfillPlugin = () => {
       enforce: 'pre',
       transform(html) {
         // Inject polyfill script tag BEFORE any other scripts
+        // Use a blocking synchronous script to ensure polyfills load first
         const polyfillScript = '<script>' +
           '(function() {' +
           'if (typeof Request === "undefined") {' +
@@ -64,6 +65,7 @@ const createPolyfillPlugin = () => {
           '})();' +
           '<' + '/script>';
         
+        // Replace <head> with <head> + polyfill script
         return html.replace('<head>', '<head>' + polyfillScript);
       }
     }

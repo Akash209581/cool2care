@@ -1,3 +1,14 @@
+// Ensure polyfills exist before importing axios
+if (typeof Request === 'undefined') {
+  window.Request = function() {};
+}
+if (typeof Response === 'undefined') {
+  window.Response = function() {};
+}
+if (typeof Headers === 'undefined') {
+  window.Headers = function() {};
+}
+
 // API Configuration for Production
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
