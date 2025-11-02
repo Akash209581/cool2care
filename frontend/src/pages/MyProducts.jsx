@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/utils/api';
 import { toast } from 'react-toastify';
 
 const MyProducts = () => {
@@ -21,7 +21,7 @@ const MyProducts = () => {
         return;
       }
 
-      const res = await axios.get('/api/seller/products', {
+      const res = await api.get('/api/seller/products', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProducts(res.data);
@@ -44,7 +44,7 @@ const MyProducts = () => {
     try {
       setDeleteLoading(productId);
       const token = localStorage.getItem('sellerToken');
-      await axios.delete(`/api/seller/products/${productId}`, {
+      await api.delete(`/api/seller/products/${productId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -60,7 +60,7 @@ const MyProducts = () => {
   const toggleProductStatus = async (productId, currentStatus) => {
     try {
       const token = localStorage.getItem('sellerToken');
-      const res = await axios.patch(`/api/seller/products/${productId}/status`, 
+      const res = await api.patch(`/api/seller/products/${productId}/status`, 
         { isActive: !currentStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );

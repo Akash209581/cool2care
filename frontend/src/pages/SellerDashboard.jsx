@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/utils/api';
 import { toast } from 'react-toastify';
 
 const SellerDashboard = () => {
@@ -20,7 +20,7 @@ const SellerDashboard = () => {
         return;
       }
 
-      const res = await axios.get('/api/seller/me', {
+      const res = await api.get('/api/seller/me', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSeller(res.data);

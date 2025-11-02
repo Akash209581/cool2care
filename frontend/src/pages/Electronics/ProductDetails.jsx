@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/utils/api';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { toast } from 'react-toastify';
@@ -34,7 +34,7 @@ const ProductDetails = () => {
 
   const fetchProduct = async () => {
     try {
-      const res = await axios.get(`/api/electronics/${id}`);
+      const res = await api.get(`/api/electronics/${id}`);
       setProduct(res.data);
       setIsFavorited(res.data.favorites?.includes(user?._id));
     } catch (error) {
@@ -47,7 +47,7 @@ const ProductDetails = () => {
 
   const fetchReviews = async () => {
     try {
-      const res = await axios.get(`/api/reviews/product/${id}`);
+      const res = await api.get(`/api/reviews/product/${id}`);
       setReviews(res.data.reviews);
     } catch (error) {
       console.error('Failed to fetch reviews');
@@ -70,7 +70,7 @@ const ProductDetails = () => {
     }
 
     try {
-      const res = await axios.put(`/api/electronics/${id}/favorite`);
+      const res = await api.put(`/api/electronics/${id}/favorite`);
       setIsFavorited(!isFavorited);
       toast.success(res.data.message);
     } catch (error) {
@@ -93,7 +93,7 @@ const ProductDetails = () => {
         cons: reviewForm.cons.split(',').map(item => item.trim()).filter(Boolean),
       };
 
-      await axios.post('/api/reviews', reviewData);
+      await api.post('/api/reviews', reviewData);
       toast.success('Review submitted successfully!');
       setShowReviewForm(false);
       setReviewForm({ rating: 5, title: '', comment: '', pros: '', cons: '' });

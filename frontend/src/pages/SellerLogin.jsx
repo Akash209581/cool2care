@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/utils/api';
 import { toast } from 'react-toastify';
 
 const SellerLogin = () => {
@@ -26,7 +26,7 @@ const SellerLogin = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post('/api/seller/login', { email, password });
+      const res = await api.post('/api/seller/login', { email, password });
       
       // Store seller token
       localStorage.setItem('sellerToken', res.data.token);

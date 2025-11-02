@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import api from '@/utils/api';
 
 const Cart = () => {
   const { user } = useAuth();
@@ -69,7 +69,7 @@ const Cart = () => {
       };
 
       const token = localStorage.getItem('token');
-      const response = await axios.post('/api/orders', orderData, {
+      const response = await api.post('/api/orders', orderData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

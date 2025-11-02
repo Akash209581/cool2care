@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/utils/api';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 
@@ -32,7 +32,7 @@ const Orders = () => {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get('/api/orders/myorders');
+      const res = await api.get('/api/orders/myorders');
       setOrders(res.data.orders || []);
     } catch (error) {
       toast.error('Failed to fetch orders');
@@ -43,7 +43,7 @@ const Orders = () => {
 
   const fetchSingleOrder = async () => {
     try {
-      const res = await axios.get(`/api/orders/${orderId}`);
+      const res = await api.get(`/api/orders/${orderId}`);
       setOrders([res.data.order]);
       setSelectedOrder(res.data.order);
       setShowOrderDetails(true);
@@ -58,7 +58,7 @@ const Orders = () => {
     if (!window.confirm('Are you sure you want to cancel this order?')) return;
 
     try {
-      await axios.put(`/api/orders/${orderId}/cancel`, {
+      await api.put(`/api/orders/${orderId}/cancel`, {
         reason: 'Cancelled by customer'
       });
       toast.success('Order cancelled successfully');

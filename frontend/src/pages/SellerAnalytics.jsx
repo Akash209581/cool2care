@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/utils/api';
 import { toast } from 'react-toastify';
 
 const SellerAnalytics = () => {
@@ -21,7 +21,7 @@ const SellerAnalytics = () => {
         return;
       }
 
-      const res = await axios.get(`/api/seller/analytics?days=${dateRange}`, {
+      const res = await api.get(`/api/seller/analytics?days=${dateRange}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setAnalytics(res.data);

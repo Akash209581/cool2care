@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '@/utils/api';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 
@@ -63,7 +63,7 @@ const FridgeDashboard = () => {
 
   const fetchItems = async () => {
     try {
-      const res = await axios.get('/api/items');
+      const res = await api.get('/api/items');
       setItems(res.data);
     } catch (err) {
       toast.error('Failed to fetch items');
@@ -74,7 +74,7 @@ const FridgeDashboard = () => {
 
   const fetchFridgeStatus = async () => {
     try {
-      const res = await axios.get('/api/fridge/status');
+      const res = await api.get('/api/fridge/status');
       setFridgeStatus(res.data);
     } catch (err) {
       console.error('Failed to fetch fridge status');
@@ -107,7 +107,7 @@ const FridgeDashboard = () => {
     }
 
     try {
-      const res = await axios.post('/api/items', newItem);
+      const res = await api.post('/api/items', newItem);
       setItems([res.data, ...items]);
       setNewItem({ name: '', category: 'fruit', quantity: 1, notes: '', customExpiryDate: '' });
       toast.success(`${res.data.name} added to fridge!`);
@@ -120,7 +120,7 @@ const FridgeDashboard = () => {
     if (!window.confirm(`Remove ${itemName} from fridge?`)) return;
 
     try {
-      await axios.delete(`/api/items/${id}`);
+      await api.delete(`/api/items/${id}`);
       setItems(items.filter(item => item._id !== id));
       toast.success('Item removed from fridge');
     } catch (err) {

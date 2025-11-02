@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/utils/api';
 import { toast } from 'react-toastify';
 
 const SellerProfile = () => {
@@ -36,7 +36,7 @@ const SellerProfile = () => {
         return;
       }
 
-      const res = await axios.get('/api/seller/me', {
+      const res = await api.get('/api/seller/me', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSeller(res.data);
@@ -86,7 +86,7 @@ const SellerProfile = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('sellerToken');
-      const res = await axios.put('/api/seller/profile', formData, {
+      const res = await api.put('/api/seller/profile', formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSeller(res.data);

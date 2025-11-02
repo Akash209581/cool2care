@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/utils/api';
 import { toast } from 'react-toastify';
 
 const SellerOrders = () => {
@@ -33,7 +33,7 @@ const SellerOrders = () => {
         return;
       }
 
-      const res = await axios.get('/api/seller/orders', {
+      const res = await api.get('/api/seller/orders', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setOrders(res.data);
@@ -53,7 +53,7 @@ const SellerOrders = () => {
       setUpdateLoading(orderId);
       const token = localStorage.getItem('sellerToken');
       
-      const res = await axios.patch(`/api/seller/orders/${orderId}/status`, 
+      const res = await api.patch(`/api/seller/orders/${orderId}/status`, 
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );

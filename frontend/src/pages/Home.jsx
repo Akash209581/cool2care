@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import api from '@/utils/api';
 
 const Home = () => {
   const { user, isAuthenticated } = useAuth();
@@ -14,7 +14,7 @@ const Home = () => {
 
   const fetchFeaturedProducts = async () => {
     try {
-      const res = await axios.get('/api/electronics/featured');
+      const res = await api.get('/api/electronics/featured');
       setFeaturedProducts(res.data.slice(0, 4)); // Show only 4 products
     } catch (error) {
       console.error('Failed to fetch featured products');

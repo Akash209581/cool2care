@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '@/utils/api';
 import { useAuth } from '../context/AuthContext';
 
 const Dashboard = () => {
@@ -26,7 +26,7 @@ const Dashboard = () => {
 
   const fetchItems = async () => {
     try {
-      const res = await axios.get('/api/items');
+      const res = await api.get('/api/items');
       setItems(res.data);
       setLoading(false);
     } catch (err) {
@@ -37,7 +37,7 @@ const Dashboard = () => {
 
   const fetchFridgeStatus = async () => {
     try {
-      const res = await axios.get('/api/fridge/status');
+      const res = await api.get('/api/fridge/status');
       setFridgeStatus(res.data);
     } catch (err) {
       console.error('Failed to fetch fridge status');
@@ -47,7 +47,7 @@ const Dashboard = () => {
   const addItem = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('/api/items', newItem);
+      const res = await api.post('/api/items', newItem);
       setItems([res.data, ...items]);
       setNewItem({ name: '', category: 'fruit', quantity: 1, notes: '' });
       setError('');
@@ -58,7 +58,7 @@ const Dashboard = () => {
 
   const deleteItem = async (id) => {
     try {
-      await axios.delete(`/api/items/${id}`);
+      await api.delete(`/api/items/${id}`);
       setItems(items.filter(item => item._id !== id));
     } catch (err) {
       setError('Failed to delete item');

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import axios from 'axios';
+import api from '@/utils/api';
 import { toast } from 'react-toastify';
 
 const SellProduct = () => {
@@ -198,7 +198,7 @@ const SellProduct = () => {
         }
       };
 
-      const res = await axios.post('/api/electronics', productData);
+      const res = await api.post('/api/electronics', productData);
       toast.success('Product listed successfully!');
       navigate(`/electronics/${res.data._id}`);
     } catch (error) {

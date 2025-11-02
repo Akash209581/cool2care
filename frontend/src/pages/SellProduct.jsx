@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/utils/api';
 import { toast } from 'react-toastify';
 
 const SellProduct = () => {
@@ -173,12 +173,12 @@ const SellProduct = () => {
 
       let res;
       if (isEditing) {
-        res = await axios.put(`/api/seller/products/${id}`, productData, {
+        res = await api.put(`/api/seller/products/${id}`, productData, {
           headers: { Authorization: `Bearer ${token}` }
         });
         toast.success('Product updated successfully');
       } else {
-        res = await axios.post('/api/seller/products', productData, {
+        res = await api.post('/api/seller/products', productData, {
           headers: { Authorization: `Bearer ${token}` }
         });
         toast.success('Product added successfully');

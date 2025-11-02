@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/utils/api';
 import { useCart } from '../../context/CartContext';
 import { toast } from 'react-toastify';
 
@@ -79,7 +79,7 @@ const ElectronicsHome = () => {
     setLoading(true);
     try {
       const params = new URLSearchParams(searchParams);
-      const res = await axios.get(`/api/electronics?${params.toString()}`);
+      const res = await api.get(`/api/electronics?${params.toString()}`);
       setProducts(res.data.products);
       setPagination({
         currentPage: res.data.currentPage,
@@ -97,7 +97,7 @@ const ElectronicsHome = () => {
 
   const fetchCategories = async () => {
     try {
-      const res = await axios.get('/api/electronics/categories');
+      const res = await api.get('/api/electronics/categories');
       setCategories(res.data);
     } catch (error) {
       console.error('Failed to fetch categories');

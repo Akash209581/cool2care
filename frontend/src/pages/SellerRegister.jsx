@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/utils/api';
 import { toast } from 'react-toastify';
 
 const SellerRegister = () => {
@@ -103,7 +103,7 @@ const SellerRegister = () => {
     setErrors({});
 
     try {
-      const res = await axios.post('/api/seller/register', {
+      const res = await api.post('/api/seller/register', {
         name: name.trim(),
         email: email.trim(),
         password,

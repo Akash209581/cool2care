@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
-import axios from 'axios';
+import api from '@/utils/api';
 import { toast } from 'react-toastify';
 
 const AuthContext = createContext();
@@ -60,15 +60,6 @@ export const AuthProvider = ({ children }) => {
 
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  // Set auth token
-  const setAuthToken = (token) => {
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    } else {
-      delete axios.defaults.headers.common['Authorization'];
-    }
-  };
-
   // Load user
   const loadUser = useCallback(async () => {
     const token = localStorage.getItem('token');
@@ -78,10 +69,8 @@ export const AuthProvider = ({ children }) => {
       return;
     }
 
-    setAuthToken(token);
-
     try {
-      const res = await axios.get('/api/auth/me');
+      const res = await api.get('/api/auth/me');
       dispatch({
         type: 'LOGIN_SUCCESS',
         payload: {
@@ -91,7 +80,6 @@ export const AuthProvider = ({ children }) => {
       });
     } catch (err) {
       localStorage.removeItem('token');
-      setAuthToken(null);
       dispatch({ type: 'AUTH_ERROR' });
     }
   }, []);
@@ -100,7 +88,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (formData) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
-      const res = await axios.post('/api/auth/register', formData);
+      const res = await api.post('/api/auth/register', formData);
       dispatch({
         type: 'LOGIN_SUCCESS',
         payload: {
@@ -108,7 +96,6 @@ export const AuthProvider = ({ children }) => {
           user: res.data,
         },
       });
-      setAuthToken(res.data.token);
       toast.success('Registration successful!');
       return { success: true };
     } catch (err) {
@@ -126,7 +113,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (formData) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
-      const res = await axios.post('/api/auth/login', formData);
+      const res = await api.post('/api/auth/login', formData);
       dispatch({
         type: 'LOGIN_SUCCESS',
         payload: {
@@ -134,7 +121,6 @@ export const AuthProvider = ({ children }) => {
           user: res.data,
         },
       });
-      setAuthToken(res.data.token);
       toast.success('Login successful!');
       return { success: true };
     } catch (err) {
@@ -151,7 +137,7 @@ export const AuthProvider = ({ children }) => {
   // Update profile
   const updateProfile = async (profileData) => {
     try {
-      const res = await axios.put('/api/auth/profile', profileData);
+      const res = await api.put('/api/auth/profile', profileData);
       dispatch({
         type: 'UPDATE_USER',
         payload: res.data,
@@ -168,7 +154,7 @@ export const AuthProvider = ({ children }) => {
   // Add address
   const addAddress = async (addressData) => {
     try {
-      const res = await axios.post('/api/auth/addresses', addressData);
+      const res = await api.post('/api/auth/addresses', addressData);
       dispatch({
         type: 'UPDATE_USER',
         payload: { addresses: res.data.addresses },
@@ -185,7 +171,7 @@ export const AuthProvider = ({ children }) => {
   // Update address
   const updateAddress = async (addressId, addressData) => {
     try {
-      const res = await axios.put(`/api/auth/addresses/${addressId}`, addressData);
+      const res = await api.put(`/api/auth/addresses/${addressId}`, addressData);
       dispatch({
         type: 'UPDATE_USER',
         payload: { addresses: res.data.addresses },
@@ -202,7 +188,7 @@ export const AuthProvider = ({ children }) => {
   // Delete address
   const deleteAddress = async (addressId) => {
     try {
-      const res = await axios.delete(`/api/auth/addresses/${addressId}`);
+      const res = await api.delete(`/api/auth/addresses/${addressId}`);
       dispatch({
         type: 'UPDATE_USER',
         payload: { addresses: res.data.addresses },

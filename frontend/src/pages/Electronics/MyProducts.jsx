@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '@/utils/api';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 
@@ -32,7 +32,7 @@ const MyProducts = () => {
 
   const fetchMyProducts = async () => {
     try {
-      const res = await axios.get('/api/electronics/seller/my-products');
+      const res = await api.get('/api/electronics/seller/my-products');
       setProducts(res.data.products || []);
     } catch (error) {
       toast.error('Failed to fetch your products');
@@ -64,7 +64,7 @@ const MyProducts = () => {
     }
 
     try {
-      await axios.delete(`/api/electronics/${productId}`);
+      await api.delete(`/api/electronics/${productId}`);
       setProducts(products.filter(p => p._id !== productId));
       toast.success('Product deleted successfully');
     } catch (error) {
@@ -74,7 +74,7 @@ const MyProducts = () => {
 
   const handleToggleActive = async (productId, currentStatus) => {
     try {
-      await axios.put(`/api/electronics/${productId}`, {
+      await api.put(`/api/electronics/${productId}`, {
         isActive: !currentStatus
       });
       
