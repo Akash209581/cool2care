@@ -8,69 +8,185 @@
     <meta name="keywords" content="smart fridge, electronics marketplace, food management, buy electronics, sell electronics">
     <title>Cool2Care - Smart Living & Electronics Hub</title>
 
-    <!-- Critical polyfills - Must be first -->
+    <!-- Critical polyfills - Load BEFORE any module -->
     <script>
-      // Essential polyfills for deployment - applied immediately
+      // Comprehensive polyfills - executed immediately, before any ES modules
       (function() {
-        // Global object
+        'use strict';
+        
+        // 1. Global object polyfill
         if (typeof global === 'undefined') {
           window.global = typeof globalThis !== 'undefined' ? globalThis : window;
         }
         
-        // Process object
+        // 2. GlobalThis polyfill
+        if (typeof globalThis === 'undefined') {
+          (function() {
+            Object.defineProperty(Object.prototype, '__magic__', {
+              get: function() { return this; },
+              configurable: true
+            });
+            __magic__.globalThis = __magic__;
+            delete Object.prototype.__magic__;
+          }());
+        }
+        
+        // 3. Process object polyfill
         if (typeof process === 'undefined') {
           window.process = { 
-            env: {}, 
+            env: {},
             browser: true,
             version: '16.0.0',
             versions: { node: '16.0.0' },
             platform: 'browser',
-            nextTick: function(fn) { setTimeout(fn, 0); }
+            nextTick: function(fn) { 
+              return setTimeout(fn, 0); 
+            },
+            cwd: function() { return '/'; },
+            chdir: function() {},
+            umask: function() { return 0; }
           };
         }
         
-        // Request constructor
+        // 4. Request constructor polyfill
         if (typeof Request === 'undefined') {
           window.Request = function Request(input, init) {
+            if (!(this instanceof Request)) {
+              return new Request(input, init);
+            }
             init = init || {};
-            this.url = typeof input === 'string' ? input : input.url || input;
-            this.method = init.method || 'GET';
-            this.headers = init.headers || {};
+            this.url = typeof input === 'string' ? input : (input.url || String(input));
+            this.method = (init.method || 'GET').toUpperCase();
+            this.headers = new Headers(init.headers || {});
             this.body = init.body || null;
             this.mode = init.mode || 'cors';
             this.credentials = init.credentials || 'same-origin';
+            this.cache = init.cache || 'default';
+            this.redirect = init.redirect || 'follow';
+            this.referrer = init.referrer || '';
+            this.referrerPolicy = init.referrerPolicy || '';
+            this.integrity = init.integrity || '';
+            this.keepalive = init.keepalive || false;
+            this.signal = init.signal || null;
           };
         }
         
-        // Response constructor
+        // 5. Response constructor polyfill
         if (typeof Response === 'undefined') {
           window.Response = function Response(body, init) {
+            if (!(this instanceof Response)) {
+              return new Response(body, init);
+            }
             init = init || {};
             this.body = body;
             this.status = init.status || 200;
             this.statusText = init.statusText || 'OK';
-            this.headers = init.headers || {};
+            this.headers = new Headers(init.headers || {});
             this.ok = this.status >= 200 && this.status < 300;
+            this.redirected = false;
+            this.type = 'default';
+            this.url = '';
+            
+            this.clone = function() {
+              return new Response(this.body, {
+                status: this.status,
+                statusText: this.statusText,
+                headers: this.headers
+              });
+            };
+            
+            this.json = function() {
+              try {
+                return Promise.resolve(JSON.parse(this.body));
+              } catch(e) {
+                return Promise.reject(e);
+              }
+            };
+            
+            this.text = function() {
+              return Promise.resolve(String(this.body));
+            };
           };
         }
         
-        // Headers constructor
+        // 6. Headers constructor polyfill
         if (typeof Headers === 'undefined') {
           window.Headers = function Headers(init) {
+            if (!(this instanceof Headers)) {
+              return new Headers(init);
+            }
             this._headers = {};
+            
             if (init) {
-              for (var key in init) {
-                this._headers[key.toLowerCase()] = init[key];
+              if (typeof init.forEach === 'function') {
+                var self = this;
+                init.forEach(function(value, name) {
+                  self.set(name, value);
+                });
+              } else if (typeof init === 'object') {
+                for (var key in init) {
+                  if (init.hasOwnProperty(key)) {
+                    this.set(key, init[key]);
+                  }
+                }
               }
             }
           };
-          window.Headers.prototype.get = function(name) {
-            return this._headers[name.toLowerCase()] || null;
+          
+          Headers.prototype.append = function(name, value) {
+            this._headers[String(name).toLowerCase()] = String(value);
           };
-          window.Headers.prototype.set = function(name, value) {
-            this._headers[name.toLowerCase()] = value;
+          
+          Headers.prototype.delete = function(name) {
+            delete this._headers[String(name).toLowerCase()];
+          };
+          
+          Headers.prototype.get = function(name) {
+            var key = String(name).toLowerCase();
+            return this._headers.hasOwnProperty(key) ? this._headers[key] : null;
+          };
+          
+          Headers.prototype.has = function(name) {
+            return this._headers.hasOwnProperty(String(name).toLowerCase());
+          };
+          
+          Headers.prototype.set = function(name, value) {
+            this._headers[String(name).toLowerCase()] = String(value);
+          };
+          
+          Headers.prototype.forEach = function(callback, thisArg) {
+            for (var name in this._headers) {
+              if (this._headers.hasOwnProperty(name)) {
+                callback.call(thisArg, this._headers[name], name, this);
+              }
+            }
           };
         }
+        
+        // 7. Buffer polyfill
+        if (typeof Buffer === 'undefined') {
+          window.Buffer = {
+            isBuffer: function() { return false; },
+            from: function(data) { 
+              if (typeof data === 'string') {
+                return new TextEncoder().encode(data);
+              }
+              return new Uint8Array(data); 
+            }
+          };
+        }
+        
+        // 8. Console polyfill (for older browsers)
+        if (typeof console === 'undefined') {
+          window.console = {
+            log: function() {},
+            error: function() {},
+            warn: function() {},
+            info: function() {},
+            debug: function() {}
+          };
+        }
+        
       })();
     </script>
 

@@ -1,8 +1,3 @@
-// Import polyfills first
-import 'whatwg-fetch';
-import './polyfills.js'
-import 'regenerator-runtime/runtime';
-
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
