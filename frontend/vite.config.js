@@ -25,6 +25,9 @@ export default defineConfig({
     sourcemap: false,
     target: 'es2015',
     minify: 'esbuild',
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
     rollupOptions: {
       output: {
         manualChunks: {
@@ -42,5 +45,10 @@ export default defineConfig({
   base: '/',
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom', 'axios'],
+    esbuildOptions: {
+      define: {
+        global: 'globalThis',
+      },
+    },
   },
 })

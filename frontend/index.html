@@ -2,27 +2,82 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAABAAAAAAAAAA" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Cool2Care - Smart Refrigerator Management & Electronics Marketplace">
     <meta name="keywords" content="smart fridge, electronics marketplace, food management, buy electronics, sell electronics">
     <title>Cool2Care - Smart Living & Electronics Hub</title>
 
+    <!-- Critical polyfills - Must be first -->
+    <script>
+      // Essential polyfills for deployment - applied immediately
+      (function() {
+        // Global object
+        if (typeof global === 'undefined') {
+          window.global = typeof globalThis !== 'undefined' ? globalThis : window;
+        }
+        
+        // Process object
+        if (typeof process === 'undefined') {
+          window.process = { 
+            env: {}, 
+            browser: true,
+            version: '16.0.0',
+            versions: { node: '16.0.0' },
+            platform: 'browser',
+            nextTick: function(fn) { setTimeout(fn, 0); }
+          };
+        }
+        
+        // Request constructor
+        if (typeof Request === 'undefined') {
+          window.Request = function Request(input, init) {
+            init = init || {};
+            this.url = typeof input === 'string' ? input : input.url || input;
+            this.method = init.method || 'GET';
+            this.headers = init.headers || {};
+            this.body = init.body || null;
+            this.mode = init.mode || 'cors';
+            this.credentials = init.credentials || 'same-origin';
+          };
+        }
+        
+        // Response constructor
+        if (typeof Response === 'undefined') {
+          window.Response = function Response(body, init) {
+            init = init || {};
+            this.body = body;
+            this.status = init.status || 200;
+            this.statusText = init.statusText || 'OK';
+            this.headers = init.headers || {};
+            this.ok = this.status >= 200 && this.status < 300;
+          };
+        }
+        
+        // Headers constructor
+        if (typeof Headers === 'undefined') {
+          window.Headers = function Headers(init) {
+            this._headers = {};
+            if (init) {
+              for (var key in init) {
+                this._headers[key.toLowerCase()] = init[key];
+              }
+            }
+          };
+          window.Headers.prototype.get = function(name) {
+            return this._headers[name.toLowerCase()] || null;
+          };
+          window.Headers.prototype.set = function(name, value) {
+            this._headers[name.toLowerCase()] = value;
+          };
+        }
+      })();
+    </script>
+
     <!-- Preload fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Browser polyfills -->
-    <script>
-      // Essential polyfills for deployment
-      if (typeof global === 'undefined') {
-        window.global = window;
-      }
-      if (typeof process === 'undefined') {
-        window.process = { env: {}, browser: true };
-      }
-    </script>
   </head>
   <body>
     <div id="root"></div>
