@@ -8,6 +8,9 @@ import './index.css'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { CartProvider } from './context/CartContext.jsx'
 
+// Import API configuration
+import './utils/api.js'
+
 // Create a query client
 const queryClient = new QueryClient({
   defaultOptions: {
