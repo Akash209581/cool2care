@@ -23,7 +23,7 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: false,
-    target: 'esnext',
+    target: 'es2015',
     minify: 'esbuild',
     rollupOptions: {
       output: {
@@ -36,10 +36,11 @@ export default defineConfig({
   },
   define: {
     global: 'globalThis',
-    'process.env': {},
+    'process.env': '{}',
+    'process.browser': 'true',
   },
   base: '/',
-  esbuild: {
-    logOverride: { 'this-is-undefined-in-esm': 'silent' }
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom', 'axios'],
   },
 })

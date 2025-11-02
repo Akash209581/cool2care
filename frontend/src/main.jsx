@@ -1,3 +1,6 @@
+// Import polyfills first
+import './polyfills.js'
+
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -10,11 +13,6 @@ import { CartProvider } from './context/CartContext.jsx'
 
 // Import API configuration
 import './utils/api.js'
-
-// Polyfill for global if needed
-if (typeof global === 'undefined') {
-  window.global = window;
-}
 
 // Create a query client
 const queryClient = new QueryClient({
