@@ -10,7 +10,35 @@ const injectPolyfills = () => {
         '<head>',
         `<head>
     <script>
-      (function(){if(typeof Request==="undefined"){window.Request=function(i,o){o=o||{};this.url=typeof i==="string"?i:(i&&i.url)||String(i);this.method=(o.method||"GET").toUpperCase();this.headers=o.headers||{};this.body=o.body||null;};window.Response=function(b,o){o=o||{};this.body=b;this.status=o.status||200;this.ok=this.status>=200&&this.status<300;this.headers=o.headers||{};};window.Headers=function(i){this._h={};if(i){for(var k in i)this._h[k.toLowerCase()]=i[k]}};Headers.prototype.get=function(n){return this._h[n.toLowerCase()]||null};Headers.prototype.set=function(n,v){this._h[n.toLowerCase()]=v};}if(typeof global==="undefined"){window.global=window;}if(typeof process==="undefined"){window.process={env:{},browser:true};}})();
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 3000,
+    proxy: {
+      '/api': {
+        target: process.env.VITE_API_URL || 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        // Inject polyfills at the START of every chunk
+        banner: '(function(){if(typeof Request==="undefined"){window.Request=function(e,t){this.url=e;this.method=(t&&t.method)||"GET";this.headers=t&&t.headers||{};this.body=t&&t.body}};if(typeof Response==="undefined"){window.Response=function(e,t){this.body=e;this.status=(t&&t.status)||200;this.ok=this.status>=200&&this.status<300;this.json=function(){return Promise.resolve(JSON.parse(e))};this.text=function(){return Promise.resolve(e)}}};if(typeof Headers==="undefined"){window.Headers=function(e){this.map={};if(e){for(var t in e)this.map[t]=e[t]}};Headers.prototype.get=function(e){return this.map[e]};Headers.prototype.set=function(e,t){this.map[e]=t}};if(typeof global==="undefined"){window.global=window};if(typeof globalThis==="undefined"){window.globalThis=window};if(typeof process==="undefined"){window.process={env:{NODE_ENV:"production"}}}})();'
+      }
+    }
+  },
+  define: {
+    'global': 'globalThis',
+    'process.env': {}
+  }
+})
     </script>`
       );
     }
