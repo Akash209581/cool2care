@@ -1,4 +1,5 @@
 // Import polyfills first
+import 'whatwg-fetch';
 import './polyfills.js'
 import 'regenerator-runtime/runtime';
 
