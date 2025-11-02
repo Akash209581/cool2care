@@ -1,9 +1,105 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+// Custom plugin to inject polyfills at the very start
+const injectPolyfills = () => {
+  return {
+    name: 'inject-polyfills',
+    transformIndexHtml(html) {
+      return html.replace(
+        '<head>',
+        `<head>
+    <script>
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// Plugin to create a standalone polyfill script file
+const createPolyfillPlugin = () => {
+  return {
+    name: 'create-polyfill',
+    transformIndexHtml: {
+      enforce: 'pre',
+      transform(html) {
+        // Inject polyfill script tag BEFORE any other scripts
+        const polyfillScript = '<script>' +
+          '(function() {' +
+          'if (typeof Request === "undefined") {' +
+          'window.Request = function(url, options) {' +
+          'this.url = url;' +
+          'this.method = (options && options.method) || "GET";' +
+          'this.headers = (options && options.headers) || {};' +
+          'this.body = options && options.body;' +
+          '};' +
+          '}' +
+          'if (typeof Response === "undefined") {' +
+          'window.Response = function(body, options) {' +
+          'this.body = body;' +
+          'this.status = (options && options.status) || 200;' +
+          'this.ok = this.status >= 200 && this.status < 300;' +
+          'this.json = function() { return Promise.resolve(JSON.parse(body)); };' +
+          'this.text = function() { return Promise.resolve(body); };' +
+          '};' +
+          '}' +
+          'if (typeof Headers === "undefined") {' +
+          'window.Headers = function(init) {' +
+          'this.map = {};' +
+          'if (init) {' +
+          'for (var key in init) {' +
+          'this.map[key] = init[key];' +
+          '}' +
+          '}' +
+          '};' +
+          'Headers.prototype.get = function(name) { return this.map[name]; };' +
+          'Headers.prototype.set = function(name, value) { this.map[name] = value; };' +
+          '}' +
+          'if (typeof global === "undefined") {' +
+          'window.global = window;' +
+          '}' +
+          'if (typeof globalThis === "undefined") {' +
+          'window.globalThis = window;' +
+          '}' +
+          'if (typeof process === "undefined") {' +
+          'window.process = { env: { NODE_ENV: "production" } };' +
+          '}' +
+          '})();' +
+          '<' + '/script>';
+        
+        return html.replace('<head>', '<head>' + polyfillScript);
+      }
+    }
+  };
+};
+
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    createPolyfillPlugin(),
+    react()
+  ],
+  server: {
+    port: 3000,
+    proxy: {
+      '/api': {
+        target: process.env.VITE_API_URL || 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  },
+  define: {
+    'global': 'globalThis',
+    'process.env': {}
+  }
+})
+    </script>`
+      );
+    }
+  };
+};
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [injectPolyfills(), react()],
   server: {
     port: 3000,
     host: true,
@@ -30,8 +126,6 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        // Inject polyfills at the very START of each JS chunk
-        banner: () => '(function(){if(typeof Request==="undefined"){window.Request=function(e,t){this.url=e;this.method=(t&&t.method)||"GET";this.headers=t&&t.headers||{};this.body=t&&t.body}};if(typeof Response==="undefined"){window.Response=function(e,t){this.body=e;this.status=(t&&t.status)||200;this.ok=this.status>=200&&this.status<300;this.json=function(){return Promise.resolve(JSON.parse(e))};this.text=function(){return Promise.resolve(e)}}};if(typeof Headers==="undefined"){window.Headers=function(e){this.map={};if(e){for(var t in e)this.map[t]=e[t]}};Headers.prototype.get=function(e){return this.map[e]};Headers.prototype.set=function(e,t){this.map[e]=t}};if(typeof global==="undefined"){window.global=window};if(typeof globalThis==="undefined"){window.globalThis=window};if(typeof process==="undefined"){window.process={env:{NODE_ENV:"production"}}}})();',
         manualChunks: {
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
