@@ -1,6 +1,5 @@
 // Import polyfills first
 import './polyfills.js'
-import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 import React from 'react'
