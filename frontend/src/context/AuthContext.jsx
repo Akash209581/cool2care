@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -70,24 +70,31 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Load user
-  const loadUser = async () => {
-    if (localStorage.token) {
-      setAuthToken(localStorage.token);
+  const loadUser = useCallback(async () => {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      dispatch({ type: 'AUTH_ERROR' });
+      return;
     }
+
+    setAuthToken(token);
 
     try {
       const res = await axios.get('/api/auth/me');
       dispatch({
         type: 'LOGIN_SUCCESS',
         payload: {
-          token: localStorage.token,
+          token: token,
           user: res.data,
         },
       });
     } catch (err) {
+      localStorage.removeItem('token');
+      setAuthToken(null);
       dispatch({ type: 'AUTH_ERROR' });
     }
-  };
+  }, []);
 
   // Register user
   const register = async (formData) => {
@@ -217,7 +224,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     loadUser();
-  }, []);
+  }, [loadUser]);
 
   return (
     <AuthContext.Provider

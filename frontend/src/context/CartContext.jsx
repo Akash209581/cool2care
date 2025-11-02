@@ -12,7 +12,7 @@ const cartReducer = (state, action) => {
         items: action.payload,
         loading: false,
       };
-    case 'ADD_TO_CART':
+    case 'ADD_TO_CART': {
       const existingItemIndex = state.items.findIndex(
         item => item.product._id === action.payload.product._id
       );
@@ -30,6 +30,7 @@ const cartReducer = (state, action) => {
           items: [...state.items, action.payload],
         };
       }
+    }
     case 'REMOVE_FROM_CART':
       return {
         ...state,
